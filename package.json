@@ -1,0 +1,28 @@
+{
+  "name": "serverside",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "form-data": "^4.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.2",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.9",
+    "sharp": "^0.34.1"
+  }
+}

@@ -12,8 +12,13 @@ const PORT = process.env.PORT || 4000;
 
 // Configure CORS - Added specific origin
 app.use(cors({
-  origin: 'http://localhost:5173' // Match your frontend URL
+  origin: [
+    'http://localhost:5173',
+    'https://ai-image-generator-frontend-rpd5.vercel.app'
+  ],
+  credentials: true // if using cookies or auth headers
 }));
+
 
 // Increase payload size limit for JSON (50MB - adjust as needed)
 app.use(express.json({ limit: '50mb' }));

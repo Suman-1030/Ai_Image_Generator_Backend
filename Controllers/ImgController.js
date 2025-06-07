@@ -42,6 +42,7 @@ const Generate = async (req, res) => {
     }
 
     const responseData = await response.json();
+    
     if (responseData.artifacts?.length > 0) {
       const imageBase64 = responseData.artifacts[0].base64;
       return res.json({ image: imageBase64 });

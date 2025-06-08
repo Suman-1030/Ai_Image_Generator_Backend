@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 4000;
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://ai-image-generator-frontend-rpd5.vercel.app'
+    'https://ai-image-generator-frontend-rpd5.vercel.app/'
   ],
   credentials: true // if using cookies or auth headers
 }));

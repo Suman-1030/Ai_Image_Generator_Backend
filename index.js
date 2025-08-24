@@ -11,12 +11,12 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Configure CORS - Added specific origin
+// Allow all origins
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://ai-image-generator-frontend-gamma.vercel.app'
-  ],
-  credentials: true // if using cookies or auth headers
+  origin: '*',             // allow any origin
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
+  credentials: false       // must be false if origin is '*'
 }));
 
 

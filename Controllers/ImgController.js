@@ -2,58 +2,57 @@ import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import Image from '../Models/Image.js';
 import User from '../Models/User.js';
+import FormData from 'form-data';
+import axios from "axios";
 
 dotenv.config();
 
 const API_KEY = process.env.API_KEY;
 
+
 const Generate = async (req, res) => {
   try {
     const { prompt } = req.body;
-    console.log("⚙️  Incoming Generate request with prompt:", prompt);
+    if (!prompt) return res.status(400).json({ error: "Prompt is required" });
 
-    if (!prompt) {
-      return res.status(400).json({ error: 'Prompt is required' });
-    }
-
-    if (!API_KEY) {
-      return res.status(500).json({ error: "Missing Stability API Key" });
-    }
-
-    const response = await fetch('https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text_prompts: [{ text: prompt }],
-        cfg_scale: 7,
-        height: 512,
-        width: 512,
-        samples: 1,
-        steps: 30,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      return res.status(500).json({ error: `Stability API Error: ${errorText}` });
-    }
-
-    const responseData = await response.json();
+    // Create multipart form
+    const form = new FormData();
+    form.append("prompt", prompt);
+    form.append("cfg_scale", 7);
+    form.append("height", 1024);
+    form.append("width", 1024);
+    form.append("samples", 1);
+    form.append("steps", 30);
+    form.append("output_format", "jpeg");
     
-    if (responseData.artifacts?.length > 0) {
-      const imageBase64 = responseData.artifacts[0].base64;
-      return res.json({ image: imageBase64 });
-    } else {
-      return res.status(500).json({ error: 'No image data received from Stability API' });
+    const response = await axios.post(
+      "https://api.stability.ai/v2beta/stable-image/generate/ultra",
+      form,
+      {
+        headers: {
+          Authorization: `Bearer ${API_KEY}`,
+          Accept: "application/json",
+          ...form.getHeaders(), // important for Node.js
+        },
+      }
+    );
+    console.log("Raw Stability API Response:", response.data);
+
+    if (!response.data?.image) {
+      throw new Error("No image data received");
     }
+    
+    res.status(200).json({ image: response.data.image });
+
+    
 
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+    console.error("Stability API Error:", err.response?.data || err.message);
+    return res.status(500).json({ error: "Internal Server Error", details: err.message });
   }
 };
+
+
 
 const addImg = async (req, res) => {
   try {

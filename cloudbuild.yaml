@@ -1,0 +1,36 @@
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+
+
+steps:
+  # Step 1: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'asia-south1-docker.pkg.dev/poetic-loop-471609-h3/imgen-backend/img-backend:latest',
+      '.'
+    ]
+
+  # Step 2: Push image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'asia-south1-docker.pkg.dev/poetic-loop-471609-h3/imgen-backend/img-backend:latest'
+    ]
+
+  # Step 3: Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'run', 'deploy', 'img-backend-service',
+      '--image', 'asia-south1-docker.pkg.dev/poetic-loop-471609-h3/imgen-backend/img-backend:latest',
+      '--region', 'asia-south1',
+      '--platform', 'managed',
+      '--allow-unauthenticated',
+      '--set-env-vars', 'Mongodb_Str=mongodb+srv://sumanpr3:sumanpr3@cluster0.ovhlnvn.mongodb.net/sumanpr3,API_KEY=sk-GLDiIThUxABkjBP2zWCOmDwVtZgJtDunQirgbOmuqi0S1caK,SECRET_KEY=kagithala_Suman'
+    ]
+
+images:
+  - 'asia-south1-docker.pkg.dev/poetic-loop-471609-h3/imgen-backend/img-backend:latest'
